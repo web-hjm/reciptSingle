@@ -1,0 +1,14 @@
+@font-face {
+    font-family: msyh;
+    src: url('./配色与文字字体/汉仪乐喵体简.ttf')
+}
+body, html {
+    font-family: msyh;
+    width: 100%;
+    margin: 0px;
+}
+#app {
+    height: 100vh;
+    background: url("./login&register/背景.png") no-repeat;
+    background-size: cover;
+  }
