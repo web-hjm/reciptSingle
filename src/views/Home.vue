@@ -1,5 +1,5 @@
 <template>
-  <div class="GrabSingle">
+  <div>
     <publicHeader/>
     <!-- 公告 -->
      <router-view></router-view>
