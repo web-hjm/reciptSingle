@@ -1,7 +1,7 @@
 <template>
   <div class="hello">
     <van-tabbar v-model="active">
-    <van-tabbar-item>
+    <van-tabbar-item @click='$router.push("/home")'>
       <span>抢单</span>
       <img
         slot="icon"
@@ -9,7 +9,7 @@
         :src='"../assets/commonPic/抢单图标.png"'
       >
     </van-tabbar-item>
-    <van-tabbar-item>
+    <van-tabbar-item @click='$router.push("/home/mine")'>
       <span>我的</span>
       <img
         slot="icon"

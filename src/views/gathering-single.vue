@@ -74,16 +74,16 @@ export default class Gathering extends Vue {
       background: url('../assets/commonPic/广告框.png') no-repeat;
       background-size: 100% 100%;
       position: absolute;
-      left: calc(50% - 12rem);
+      left: calc(50% - 11rem);
       top: 11%;
-      width: 24rem;
-      height: 10rem;
+      width: 22rem;
+      height: 9rem;
       h2 {
         color: $fontColor;
         margin: 3% 0px 0px 10%;
       }
       p {
-        width:20rem;
+        width:19rem;
         font-size: 0.9rem;
         margin: 3% 0px 0px 10%;
         color:#8e8e91;
@@ -95,18 +95,18 @@ export default class Gathering extends Vue {
     .recipt-single-footer-btn {
       width: 100%;
       position: absolute;
-      top: 68%;
+      top: 70%;
       .van-col {
-        height: 12rem;
+        height: 10rem;
         text-align: center;
-        line-height: 10.2rem;
+        line-height: 10rem;
         color: white;
         font-size: 1.8rem;
       }
       .van-col:nth-child(1) {
         position: relative;
-        background: url('../assets/commonPic/4/刷新按钮.png') no-repeat;
-        background-size: 100% 100%;
+        background: url('../assets/commonPic/4/刷新按钮.png') 50% no-repeat;
+        background-size: contain;
         span {
           font-size: 1rem;
           width: 100%;
@@ -120,10 +120,10 @@ export default class Gathering extends Vue {
   .singleList {
     background: url('../assets/commonPic/4/可抢单统计括号.png') no-repeat;
     background-size: 100% 100%;
-    width: 23rem;
+    width: 22rem;
     height: 15rem;
     position: absolute;
-    left: calc(50% - 11.5rem);
+    left: calc(50% - 11rem);
     top: 33%;
     color:white;
     .singleList-header {
@@ -136,12 +136,66 @@ export default class Gathering extends Vue {
     }
     .singleList-body {
       width: 100%;
-      height: 70%;
+      height: 68%;
       background: purple;
     }
     .singleList-footer {
       text-align: center;
     }
   }
- 
+  @media screen and (max-width: 390px) and (max-height: 740px){
+    .GrabSingle {
+      .announcement {
+        left: calc(50% - 9.8rem);
+        top: 14%;
+        width: 20rem;
+         p {
+          width:17rem;
+        }
+      }
+      .recipt-single-footer-btn {
+        top: 85%;
+      }
+    }
+    .singleList {
+        width: 18rem;
+        height: 18rem;
+        left: calc(50% - 9rem);
+        top: 38%;
+        .singleList-body {
+          width: 100%;
+          height: 62%;
+        }
+    }
+  }
+  @media screen and (min-width: 1024px) {
+        .singleList {
+            height: 18rem;
+            top: 32%;
+            .singleList-header {
+              .van-row:nth-child(1) {
+                margin: 1vw 0vw 0vw 2vw;
+              }
+              .van-row:nth-child(2) {
+                text-align: center;
+              }
+            }
+            .singleList-body {
+              width: 100%;
+              height: 70%;
+            }
+        }
+    
+  }
+  @media screen and (max-width: 320px) {
+    .GrabSingle {
+      .recipt-single-footer-btn {
+        top: 92%;
+      }
+    }
+    .singleList {
+      height: 16rem;
+      top: 42%
+    }
+  }
 </style>

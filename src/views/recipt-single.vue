@@ -1,5 +1,5 @@
 <template>
-  <div class="GrabSingle">
+  <div class="reciptSingle">
     <p class='grab-single-title'>分润百分比：1%（注：充值余额 * 可抢单百分比 - 已抢单金额）</p>
 
     <!-- 公告 -->
@@ -56,7 +56,7 @@ import { Component, Vue } from 'vue-property-decorator'
 @Component({
 
 })
-export default class GrabSingle extends Vue {
+export default class reciptSingle extends Vue {
     private balance:number = 9999 // 余额
     private sum:number = 9999 // 收益
 
@@ -64,7 +64,7 @@ export default class GrabSingle extends Vue {
 </script>
 <style lang='scss'>
   $fontColor: #f6ed5a;
-  .GrabSingle {
+  .reciptSingle {
     .grab-single-title {
       font-size: 0.6rem;
       color: $fontColor;
@@ -74,16 +74,16 @@ export default class GrabSingle extends Vue {
       background: url('../assets/commonPic/广告框.png') no-repeat;
       background-size: 100% 100%;
       position: absolute;
-      left: calc(50% - 12rem);
+      left: calc(50% - 11rem);
       top: 11%;
-      width: 24rem;
+      width: 22rem;
       height: 12rem;
       h2 {
         color: $fontColor;
         margin: 3% 0px 0px 10%;
       }
       p {
-        width:20rem;
+        width:19rem;
         font-size: 0.9rem;
         margin: 3% 0px 0px 10%;
         color:#8e8e91;
@@ -93,34 +93,35 @@ export default class GrabSingle extends Vue {
       }
     }
     .recipt-single-footer-btn {
-      width: 100%;
+      width: 22rem;
       position: absolute;
-      top: 70%;
+      margin-left: calc(50% - 11rem);
+      top: 71%;
       .van-col {
-        height: 10.2rem;
+        height: 8.5rem;
         text-align: center;
-        line-height: 10.2rem;
+        line-height: 10rem;
         color: white;
         font-size: 1.8rem;
       }
       .van-col:nth-child(1) {
         background: url('../assets/commonPic/4/开始抢单按钮.png') no-repeat;
-        background-size: cover;
+        background-size: 100% 110%;
       }
       .van-col:nth-child(2) {
         background: url('../assets/commonPic/4/刷新按钮.png') no-repeat;
-        background-size: cover;
+        background-size: 100% 110%;
       }
     }
   }
   .singleList {
     background: url('../assets/commonPic/4/可抢单统计括号.png') no-repeat;
     background-size: 100% 100%;
-    width: 23rem;
-    height: 15rem;
+    width: 22rem;
+    height: 13.5rem;
     position: absolute;
-    left: calc(50% - 11.5rem);
-    top: 37%;
+    left: calc(50% - 11rem);
+    top: 39%;
     color:white;
     .singleList-header {
       .van-row:nth-child(1) {
@@ -132,12 +133,60 @@ export default class GrabSingle extends Vue {
     }
     .singleList-body {
       width: 100%;
-      height: 70%;
+      height: 65%;
       background: purple;
     }
     .singleList-footer {
       text-align: center;
+      
     }
   }
- 
+  @media screen and (max-width: 390px) and (max-height: 740px){
+    .reciptSingle {
+      .announcement {
+        left: calc(50% - 9.8rem);
+        top: 15%;
+        width: 20rem;
+         p {
+          width:17rem;
+        }
+      }
+      .recipt-single-footer-btn {
+        top: 100%;
+        .van-col {
+          height: 9rem;
+        }
+      }
+    }
+    .singleList {
+        width: 18rem;
+        height: 18rem;
+        left: calc(50% - 9rem);
+        top: 49%;
+        .singleList-body {
+          width: 100%;
+          height: 66%;
+        }
+    }
+  }
+  @media screen and (min-width: 1024px) {
+    .singleList {
+        // width: 18rem;
+        height: 18rem;
+        // left: calc(50% - 9rem);
+        top: 35%;
+        .singleList-header {
+          .van-row:nth-child(1) {
+            margin: 1vw 0vw 0vw 2vw;
+          }
+          .van-row:nth-child(2) {
+            text-align: center;
+          }
+        }
+        .singleList-body {
+          width: 100%;
+          height: 70%;
+        }
+    }
+  }
 </style>

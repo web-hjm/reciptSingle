@@ -23,7 +23,8 @@ export default new Router({
           path: 'grab-single',
           name: 'grab-single',
           meta: {
-            title: '抢单'
+            title: '抢单',
+            type: 'app'
           },
           component: () => import(/* webpackChunkName: "about" */ './views/grab-single.vue')
         },
@@ -31,7 +32,8 @@ export default new Router({
           path: 'recipt-single',
           name: 'recipt-single',
           meta: {
-            title: '抢收款单'
+            title: '抢收款单',
+            type: 'app'
           },
           component: () => import(/* webpackChunkName: "about" */ './views/recipt-single.vue')
         },
@@ -39,7 +41,8 @@ export default new Router({
           path: 'gathering-single',
           name: 'gathering-single',
           meta: {
-            title: '抢付款单'
+            title: '抢付款单',
+            type: 'app'
           },
           component: () => import(/* webpackChunkName: "about" */ './views/gathering-single.vue')
         },
@@ -97,6 +100,14 @@ export default new Router({
             title: '充值记录'
           },
           component: () => import(/* webpackChunkName: "about" */ './views/chargeLog.vue')
+        },
+        {
+          path: 'withdraw-weposit-log',
+          name: 'withdraw-weposit-log',
+          meta: {
+            title: '提现记录'
+          },
+          component: () => import(/* webpackChunkName: "about" */ './views/withdrawDepositLog.vue')
         }
       ]
     }

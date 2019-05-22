@@ -30,6 +30,7 @@
       </van-row>
       <van-row type="flex" justify="space-around" >
         <van-col span="24">
+          <div @click='$router.push("/home/recipt-single")'></div>
         </van-col>
       </van-row>
       <van-row type="flex" justify="space-around" >
@@ -39,6 +40,7 @@
       </van-row>
       <van-row type="flex" justify="space-around" >
         <van-col span="24">
+          <div @click='$router.push("/home/gathering-single")'></div>
         </van-col>
       </van-row>
     </div>
@@ -65,9 +67,9 @@ export default class GrabSingle extends Vue {
     background: url('../assets/commonPic/广告框.png') no-repeat;
     background-size: 100% 100%;
     position: absolute;
-    left: calc(50% - 12rem);
+    left: calc(50% - 11rem);
     top: 10%;
-    width: 24rem;
+    width: 22rem;
     height: 10rem;
   }
   .single-sum,.check-content{
@@ -87,6 +89,10 @@ export default class GrabSingle extends Vue {
     font-size:0.8rem;
     left: calc(50% - 8.3rem);
     .van-row:nth-child(2) {
+      div {
+        weight:100%;
+        height: 100%;
+      }
       .van-col:first-child {
         background: url("../assets/commonPic/抢收款单.png") -4% 5% no-repeat;
         background-size: 90% 110%;
@@ -99,6 +105,10 @@ export default class GrabSingle extends Vue {
       margin-top: 10%;
     }
     .van-row:nth-child(4) {
+      div {
+        weight:100%;
+        height: 100%;
+      }
       .van-col:first-child {
         background: url("../assets/commonPic/抢付款单图标.png") -4% 4% no-repeat;
         background-size: 90% 110%;
@@ -108,4 +118,11 @@ export default class GrabSingle extends Vue {
       }
     }
   }
+  @media screen and (max-width: 360px){
+        .announcement {
+          width: 18rem !important;
+          height: 8rem !important;
+          left: calc(50% - 9rem) !important;
+        }
+    }
 </style>

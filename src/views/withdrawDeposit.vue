@@ -69,14 +69,17 @@ export default class withdrawDeposit extends Vue {
     .withdrawDeposit {
         color:white;
         .content {
-            margin-top:15%;
+            margin-top:10%;
+             .van-row:nth-of-type(odd){ background:rgba($color: #813c4d, $alpha: 0.4)}
+        .van-row:nth-of-type(even){ background:rgba($color: #072859, $alpha: 0.4)}
+        .van-row:last-child {background: none}
             .van-row {
                 height:6vh;
-                margin-top:5vh;
+                margin-top:3vh;
                 line-height:6vh;
                 .van-col:first-child {
                     text-align:right;
-                    font-size:5vw;
+                    font-size:3vh;
                 }
                 .van-col {
                     height: 6vh;
@@ -84,9 +87,10 @@ export default class withdrawDeposit extends Vue {
                         padding:0px 10px;
                     }
                     .van-field {
-                        // background: transparent;
+                        background: transparent;
                         input {
                         display: inline-block;
+                        color: white;
                         height: 6vh;
                         line-height: 6vh;
                         font-size: 1rem;
@@ -105,7 +109,7 @@ export default class withdrawDeposit extends Vue {
             text-align:center;
             color:white;
             border:none;
-            margin-top: 3vh;
+            // margin-top: 1vh;
         }
     }
 </style>

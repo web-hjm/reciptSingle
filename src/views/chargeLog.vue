@@ -17,7 +17,7 @@
       <p v-show='logList.length <= 0' class='unlog-show'>
         暂无充值记录！！！
       </p>
-      <van-row type="flex" justify="space-around" v-for='(item, index) in logList' >
+      <van-row type="flex" justify="space-around" v-for='(item, index) in logList' :key='item + index'>
           <van-col span="8" >
             {{item.time}}
           </van-col>
@@ -26,7 +26,6 @@
           </van-col>
           <van-col span="8" >
             {{item.status}}
-          </van-col>
           </van-col>
       </van-row>
     </div>
@@ -62,7 +61,7 @@ export default class ChargeLog extends Vue {
         .content {
           .van-row {
             background: #4b4c68;
-            margin-top:2vh;
+            margin-top:1vh;
             .van-col {
               padding:1vh 0.2vh;
                text-align:center;

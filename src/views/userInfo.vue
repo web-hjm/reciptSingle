@@ -60,14 +60,17 @@ export default class UserInfo extends Vue {
     .userInfo {
         color:white;
         .content {
-            margin-top:20%;
+            margin-top:10%;
+            .van-row:nth-of-type(odd){ background:rgba($color: #813c4d, $alpha: 0.4)}
+        .van-row:nth-of-type(even){ background:rgba($color: #072859, $alpha: 0.4)}
+        .van-row:last-child {background: none}
             .van-row {
                 height:6vh;
-                margin-top:5vh;
+                margin-top:2vh;
                 line-height:6vh;
                 .van-col:first-child {
                     text-align:right;
-                    font-size:5vw;
+                    font-size:3vh;
                 }
                 .van-col {
                     height: 6vh;
@@ -75,11 +78,12 @@ export default class UserInfo extends Vue {
                         padding:0px 10px;
                     }
                     .van-field {
-                        // background: transparent;
+                        background: transparent;
                         input {
                         display: inline-block;
                         height: 6vh;
                         line-height: 6vh;
+                        color: white;
                         font-size: 1rem;
                         // font-family: none;
                         }

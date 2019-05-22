@@ -6,5 +6,6 @@ declare module "vue/types/vue" {
     $post: any,
     $get:any,
     $route: Route,
+    util: any
   }
 }

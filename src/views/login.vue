@@ -17,21 +17,24 @@
           <van-col span="4">
           </van-col>
           <van-col span="20">
-            <van-field placeholder="请输入手机号" />
+            <van-field placeholder="请输入手机号" v-model="loginData.phone"/>
           </van-col>
         </van-row>
         <van-row type="flex" justify="space-around" >
           <van-col span="4">
             </van-col>
           <van-col span="20">
-            <van-field placeholder="请输入你的登陆密码" />
+            <van-field placeholder="请输入你的登陆密码"  type='password' v-model="loginData.password"/>
           </van-col>
         </van-row>
         <van-row type="flex" justify="space-around" >
           <van-col span="4">
           </van-col>
-          <van-col span="20">
-            <van-field placeholder="请输入验证码" />
+          <van-col span="12">
+            <van-field placeholder="请输入验证码" v-model="loginData.verify"/>
+          </van-col>
+          <van-col span="8">
+            <img :src="verifyPic" alt="" class="login-verify-pic" @click='getPic()'>
           </van-col>
         </van-row>
       </div>
@@ -43,7 +46,7 @@
             邀请码：
           </van-col>
           <van-col span="16">
-            <van-field placeholder="请输入代理商提供的邀请码" />
+            <van-field placeholder="请输入代理商提供的邀请码" v-model="registerData.invatationCode"/>
           </van-col>
         </van-row>
         <van-row type="flex" justify="space-around" >
@@ -51,7 +54,7 @@
             你的昵称：
           </van-col>
           <van-col span="16">
-            <van-field placeholder="请输入你的昵称" />
+            <van-field placeholder="请输入你的昵称" v-model="registerData.name" clearable/>
           </van-col>
         </van-row>
         <van-row type="flex" justify="space-around" >
@@ -59,7 +62,7 @@
             你的手机号：
           </van-col>
           <van-col span="16">
-            <van-field placeholder="请输入手机号" />
+            <van-field placeholder="请输入手机号" v-model="registerData.phone"/>
           </van-col>
         </van-row>
         <van-row type="flex" justify="space-around" >
@@ -67,7 +70,7 @@
             登录密码：
           </van-col>
           <van-col span="16">
-            <van-field placeholder="请输入你的登录密码" />
+            <van-field placeholder="请输入你的登录密码" v-model="registerData.password" type='password'/>
           </van-col>
         </van-row>
         <van-row type="flex" justify="space-around" >
@@ -75,20 +78,112 @@
             确认密码：
           </van-col>
           <van-col span="16">
-            <van-field placeholder="请输入你的登录密码" />
+            <van-field placeholder="请输入你的登录密码" v-model="registerData.confirmPassword"
+            type='password'/>
           </van-col>
         </van-row>
       </div>
       <!-- 注册模块 -->
-      <button :class='user_status ? "login-btn login-btn-logo" : "login-btn login-register-logo"'></button>
+      <button :class='user_status ? "login-btn login-btn-logo" : "login-btn login-register-logo"' @click="login"></button>
       <span class='register-account' v-show='user_status' @click='user_status = false'>注册账号</span>
   </div>
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import CryptoJS from 'crypto-js';
 @Component({})
 export default class Login extends Vue {
   public user_status: boolean = true; // 表示用户已注册或未注册状态
+  private verifyStatus: boolean = false; // 验证码状态
+  private verifyPic:string = ''; // 验证码地址
+  private loginData:any = {
+    phone: '',
+    password: '',
+    verify: ''
+  } // 登陆参数
+  private registerData: any = {
+    invatationCode: '',
+    name: '',
+    phone: '',
+    password: '',
+    confirmPassword: ''
+  }
+  getPic () {
+    if (!this.verifyStatus) {
+      this.verifyStatus = true;
+      this.verifyPic = `${this.util.requestApi}member/login/getVerify?${Math.random()}`
+      this.verifyStatus = false;
+    } else {
+        this.$toast('请勿多次刷新验证码图片');
+    }
+  }
+  login () {
+    if (this.user_status) {
+      if (!this.loginData.phone) {
+        this.$toast('账号不可为空，请输入账号');
+        return
+      } else if (!this.loginData.password) {
+        this.$toast('登录密码不可为空，请输入密码');
+        return
+      } else if (!this.loginData.verify) {
+        this.$toast('图形验证码不可为空，请输入验证码');
+        return
+      } else if (!(/^[1][3,4,5,7,8][0-9]{9}$/.test(this.loginData.phone))) {
+        this.$toast('该手机号码格式有误，请重新输入');
+        return
+      } else if (!(/^(?![a-zA-z]+$)(?!\d+$)(?![!@#$%^&*]+$)[a-zA-Z\d!@#$%^&*]{6,16}$/.test(this.loginData.password))) {
+        this.$toast('密码格式有误，请输入6~16位数字和字母');
+        return
+      } else {
+        this.$post('member/login/checkVerify', {
+          moblie: this.loginData.phone,
+          pwd: CryptoJS.MD5(this.loginData.password).toString(),
+          code: this.loginData.verify
+        }, {from: true}).then((res:any) => {
+          if(res.res.code == 0) {
+            this.$cookies.set('userId', CryptoJS.MD5(this.loginData.moblie).toString(), 60 * 60 * 24 * 3) // 存储手机号3天 3天内有效
+          }
+        })
+      }
+    } else {
+      if (!this.registerData.invatationCode) {
+        this.$toast('请输入代理商提供的邀请码');
+        return
+      } else if (!this.registerData.name) {
+        this.$toast('昵称不可为空，请输入昵称');
+        return
+      } else if (!this.registerData.phone) {
+        this.$toast('手机号码不可为空，请输入手机号码');
+        return
+      } else if ((!this.registerData.password) || (!this.registerData.confirmPassword)) {
+        this.$toast('密码不可为空，请输入密码');
+        return
+      } else if (this.registerData.name.length > 10) {
+        this.$toast('昵称不可超过10个字');
+      } else if (this.registerData.password !== this.registerData.confirmPassword) {
+        this.$toast('二次确认密码和设置密码不一致，请重新输入');
+        return
+      } else if (!(/^[1][3,4,5,7,8][0-9]{9}$/.test(this.registerData.phone))) {
+        this.$toast('该手机号码格式有误，请重新输入');
+        return
+      } else if (!(/^(?![a-zA-z]+$)(?!\d+$)(?![!@#$%^&*]+$)[a-zA-Z\d!@#$%^&*]{6,16}$/.test(this.registerData.password))) {
+        this.$toast('密码格式有误，请输入6~16位数字和字母');
+        return
+      } else {
+        this.$post('member/login/register', {
+          phoneNumber: this.registerData.phone,
+          password: CryptoJS.MD5(this.registerData.password).toString(),
+          registerCode: this.registerData.invatationCode,
+          memName: this.registerData.name
+        }, {from: true}).then((res:any) => {
+          console.log(res)
+        })
+      }
+    }
+  }
+  mounted() {
+    this.getPic();  
+  }
 }
 </script>
 <style lang="scss">
@@ -96,6 +191,10 @@ export default class Login extends Vue {
   // height: 100vh;
   // background: url("../assets/login&register/背景.png") no-repeat;
   // background-size: cover;
+  .login-verify-pic {
+    width: 100%;
+    height: 100%;
+  }
   .user_logo {
     width: 6rem;
     height: 7rem;
@@ -131,8 +230,8 @@ export default class Login extends Vue {
   .register-content {
     position: absolute;
     color: #ffffff;
-    width: 20rem;
-    left: calc(50% - 10rem);
+    width: 18rem;
+    left: calc(50% - 9rem);
     top: 35%;
     border: 1px solid #8e8e91;
     .van-col {
@@ -167,8 +266,8 @@ export default class Login extends Vue {
   .login-content{
     position: absolute;
     color: #ffffff;
-    width: 20rem;
-    left: calc(50% - 10rem);
+    width: 18rem;
+    left: calc(50% - 9rem);
     top: 35%;
     border: 1px solid #8e8e91;
     .van-row:first-child {
@@ -233,7 +332,7 @@ export default class Login extends Vue {
     color: #f6ed5a;
     font-size: 1rem;
     position: absolute;
-    top: 78%;
+    top: 80%;
     left: calc(50% - 2rem);
     display: inline-block;
     width: 4rem;

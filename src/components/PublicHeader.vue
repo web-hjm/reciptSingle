@@ -28,7 +28,7 @@ export default class PublicHeader extends Vue {
       .van-col:last-child {
         span {
           display: inline-block;
-          height: 100%;
+          // height: 100%;
           width: 12rem;
           text-align:center;
           line-height: 3rem;
