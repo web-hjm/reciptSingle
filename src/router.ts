@@ -89,7 +89,8 @@ export default new Router({
           path: 'grab-single-log',
           name: 'grab-single-log',
           meta: {
-            title: '抢单记录'
+            title: '抢单记录',
+            type: 'app'
           },
           component: () => import(/* webpackChunkName: "about" */ './views/grabSingleLog.vue')
         },

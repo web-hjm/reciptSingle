@@ -42,7 +42,7 @@
     <!-- 底部按钮 -->
     <van-row type="flex" justify="space-around" class="recipt-single-footer-btn">
         <van-col span="11">
-          <div>
+          <div @click='actionSingle'>
             <span>当前余额：<strong>{{balance}}</strong>元</span>
             开始抢单
           </div>
@@ -54,6 +54,16 @@
         </van-col>
       </van-row>
     <!-- 底部按钮 -->
+
+    <van-dialog
+      v-model="actionSingleShow"
+      title="智能匹配订单..."
+      confirmButtonText='关闭抢单'
+      @confirm='Single(0)'
+    >
+      <p>抢单匹配中请稍后，60S后若未抢到订单，请重新点击开始抢单按钮</p>
+      <p style="text-align:center">{{countDown}}秒</p>
+    </van-dialog>
   </div>
 </template>
 
@@ -67,6 +77,8 @@ export default class reciptSingle extends Vue {
   private pageNum: number = 1;
   private balance:number = 0 // 余额
   private pageSize: number = 10; // 页数
+  private actionSingleShow: boolean = false;
+  private countDown: number = 60 // 倒计时
   getSingleList (type?:boolean) {
     if (type) {
       this.pageNum = 1;
@@ -80,7 +92,7 @@ export default class reciptSingle extends Vue {
         this.$toast('没有更多数据了');
       } else {
         this.$toast('加载成功')
-        this.singleList = [this.singleList, ...res.data.data.rows];
+        this.singleList = this.singleList.concat(res.data.data.rows);
       }
     })
   }
@@ -88,6 +100,31 @@ export default class reciptSingle extends Vue {
     this.pageNum++;
     this.getSingleList();
   }
+  actionSingle () {
+    this.actionSingleShow = true;
+    this.countDown = 60; // 重置倒计时
+    let time = setInterval(() => {
+      if (this.countDown <= 0) {
+        clearInterval(time);
+        this.actionSingleShow = false;
+      } else {
+        this.countDown--;
+      }
+      console.log(this.countDown);
+    }, 1000)
+    try {
+        let data = this.Single(1);
+        console.log(data);
+    } catch (error) {
+        this.countDown = 60; // 重置倒计时
+        this.actionSingleShow = false;
+    }
+  }
+  Single(status: number) {
+    return this.$post(`member/memberInfo/updateMember`, {
+      mode: status
+    }, {from: true})
+  } 
   created() {
     this.getSingleList();  
     this.$post(`member/account/getAccountInfo`, {}).then((res:any) => {

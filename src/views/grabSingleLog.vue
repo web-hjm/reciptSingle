@@ -1,17 +1,17 @@
 <template>
   <div class="grab-single-log">
     <div class='header'>
-      <van-row type="flex" justify="space-around" >
+      <van-row type="flex" justify="space-around" style="textAlign:center">
           <van-col span="5" >
               创建时间
           </van-col>
           <van-col span="4" >
               名称
           </van-col>
-          <van-col span="4" >
+          <van-col span="5" >
               类型
           </van-col>
-          <van-col span="4" >
+          <van-col span="3" >
               金额
           </van-col>
           <van-col span="4" >
@@ -23,22 +23,30 @@
       <p v-show='logList.length <= 0' class='unlog-show'>
         暂无抢单记录！！！
       </p>
-      <van-row type="flex" justify="space-around" v-for='(item, index) in logList' >
+      <van-row type="flex" justify="space-around" v-for='(item, index) in logList' :key='index' style="textAlign:center">
           <van-col span="5" >
-            {{item.time}}
+            {{item.createTimeStr}}
           </van-col>
           <van-col span="4" >
-            {{item.name}}
+            {{item.goodsName}}
+          </van-col>
+          <van-col span="5" >
+            <span v-if='item.payType == "zfbwap"'>支付宝扫码</span>
+            <span v-else-if='item.payType == "wxwap"'>微信扫码</span>
+          </van-col>
+          <van-col span="3" >
+            {{item.payAmount}}
           </van-col>
           <van-col span="4" >
-            {{item.type}}
-          </van-col>
-          <van-col span="4" >
-            {{item.money}}
-          </van-col>
-          <van-col span="4" >
+            <van-button type="default" class="log-btn" v-if='item.status == 0'>确认收款</van-button>
+            <van-button type="default" class="log-btn" v-if='item.status == 1' disabled>已收款</van-button>
+            <van-button type="default" class="log-btn" v-if='item.status == 2' disabled>已撤销</van-button>
           </van-col>
       </van-row>
+      <p v-show='logList.length > 0' style="textAlign:center" @click='() => {
+          pageNum++,
+          getLogList()
+        }' >加载更多</p>
     </div>
   </div>
 </template>
@@ -46,20 +54,26 @@
 import { Component, Vue } from "vue-property-decorator";
 @Component({})
 export default class GrabSingleLog extends Vue {
-    private logList: any[] = [
-      {
-        time: '2019-5-20 10:12:48',
-        name: '手机',
-        type: '支付宝',
-        money: '50.00'
-      },
-      {
-        time: '2019-5-20',
-        name: '手机',
-        type: '支付宝',
-        money: '50.00'
-      }
-    ]
+  private pageNum: number = 1;
+  private pageSize: number = 10; // 页数
+    private logList: any[] = []
+    creted() {
+      this.getLogList();
+    }
+    getLogList () {
+      this.$post(`member/memberInfo/orderList`, {
+        pageNumber: this.pageNum,
+        pageSize: this.pageSize
+      }, {from: true}).then((res: any) => {
+        if (res.data.data.rows.length <= 0) {
+          this.$toast('没有更多数据了');
+        } else {
+          this.$toast('加载成功')
+          this.logList = this.logList.concat(res.data.data.rows)
+        }
+         
+      })
+    }
 }
 </script>
 <style lang="scss">
@@ -71,6 +85,8 @@ export default class GrabSingleLog extends Vue {
           }
         }
         .content {
+          height: 80vh;
+          overflow-y: auto;
           .van-row {
             background: #4b4c68;
             margin-top:2vh;
@@ -91,5 +107,12 @@ export default class GrabSingleLog extends Vue {
           text-align:center;
           margin-top:40%;
         }
+        .log-btn {
+            padding: 0px;
+            height: 5vh;
+            line-height: 5vh;
+            font-size: 2vh;
+            border-radius: 1vh;
+          }
     }
 </style>

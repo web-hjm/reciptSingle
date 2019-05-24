@@ -25,16 +25,17 @@
         </van-row>
       </div>
       <div class="singleList-body">
-        <div class="singleList-body">
         <van-row type="flex" justify="space-around" v-for="(item, index) in singleList" :key='item.payAmount + index'>
-            <van-col span="6" v-if='item.payType == "zfbwap"'>支付宝扫码</van-col>
-            <van-col span="6" v-else-if='item.payType == "wxwap"'>微信扫码</van-col>
-            <van-col span="6">{{item.payAmount}}</van-col>
-            <van-col span="6">{{item.totalCount}}</van-col>
-          </van-row>
-        </div>
+          <!-- <van-col span="6" v-if='item.payType == "zfbwap"'>支付宝扫码</van-col>
+          <van-col span="6" v-else-if='item.payType == "wxwap"'>微信扫码</van-col> -->
+          <van-col span="6" v-if='item.payAmount'>付款单</van-col>
+          <van-col span="6">{{item.payAmount}}</van-col>
+          <van-col span="6">
+            <button class='single-btn'>抢单</button>
+          </van-col>
+        </van-row>
       </div>
-      <div class="singleList-footer">
+      <div class="singleList-footer" @click='moreData'>
         加载更多
       </div>
     </div>
@@ -73,7 +74,7 @@ export default class Gathering extends Vue {
       this.pageNum = 1;
       this.singleList = [];
     }
-    this.$post(`member/memberInfo/orderList`, {
+    this.$post(`member/rechargeOrder/getList`, {
       pageNumber: this.pageNum,
       pageSize: this.pageSize
     }, {from: true}).then((res:any) => {
@@ -81,8 +82,9 @@ export default class Gathering extends Vue {
         this.$toast('没有更多数据了');
       } else {
         this.$toast('加载成功')
-        this.singleList = [this.singleList, ...res.data.data.rows];
+        this.singleList = this.singleList.concat(res.data.data.rows);
       }
+      console.log(this.singleList)
     })
   }
   moreData () {
@@ -175,13 +177,18 @@ export default class Gathering extends Vue {
       overflow: hidden;
       overflow-y: auto;
       text-align: center;
+      .van-row {
+        margin-top: 1vh;
+      }
+      .single-btn {
+        background: transparent;
+        border-radius: 1vh;
+      }
     }
     .singleList-footer {
       text-align: center;
+      margin-top: 1vh;
     }
-    .singleList-footer {
-        margin-top: 1vh;
-      }
   }
   @media screen and (max-width: 390px) and (max-height: 740px){
     .GrabSingle {
@@ -204,7 +211,7 @@ export default class Gathering extends Vue {
         top: 38%;
         .singleList-body {
           width: 100%;
-          height: 65%;
+          height: 68%;
         }
     }
   }
