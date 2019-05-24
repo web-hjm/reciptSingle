@@ -2,7 +2,13 @@
   <div class="GrabSingle">
     <!-- 公告 -->
     <div class="announcement">
-
+      <h2>公告</h2>
+      <van-notice-bar background='none' class="announcement-content" v-for="(item, index) in AnnouncementsStr" :key='index' color='white'>
+        {{index + 1}}、{{item.noticeContent}}
+        <!-- <div >
+          {{item.noticeContent}}
+        </div> -->
+      </van-notice-bar>
     </div>
     <!-- 公告 -->
 
@@ -59,18 +65,49 @@ import { Component, Vue } from 'vue-property-decorator'
 export default class GrabSingle extends Vue {
     private balance:number = 9999 // 余额
     private sum:number = 9999 // 收益
-
+    private AnnouncementsStr:string = ''
+    getAnnouncementContent () {
+      this.$post(`member/notice/queryNotice`, {}).then((res:any) => {
+        this.AnnouncementsStr = res.data.data.rows;
+        console.log(this.AnnouncementsStr)
+      })
+    }
+    getUserMoneyInfo () {
+        this.$post(`member/account/getAccountInfo`, {}).then((res:any) => {
+          this.balance = res.data.data.availableMoney;
+          this.sum = res.data.data.totalIncome;
+        })
+    }
+    mounted() {
+      this.getUserMoneyInfo();
+      setInterval(() => {
+        this.getAnnouncementContent();
+      }, 5000)
+    }
+    created() {
+       this.getAnnouncementContent();
+    }
 }
 </script>
 <style lang='scss'>
   .announcement {
     background: url('../assets/commonPic/广告框.png') no-repeat;
-    background-size: 100% 100%;
+    background-size: 100% 110%;
     position: absolute;
     left: calc(50% - 11rem);
     top: 10%;
+    overflow-y: auto;
     width: 22rem;
     height: 10rem;
+    color: white;
+    h2 {
+      margin-left: 10vw;
+    }
+    .announcement-content {
+      width: 80%;
+      margin: auto;
+      // height: 80%;
+    }
   }
   .single-sum,.check-content{
     color: white;
@@ -87,10 +124,10 @@ export default class GrabSingle extends Vue {
   .check-content {
     top: 47%;
     font-size:0.8rem;
-    left: calc(50% - 8.3rem);
+    left: calc(50% - 9rem);
     .van-row:nth-child(2) {
       div {
-        weight:100%;
+        width:100%;
         height: 100%;
       }
       .van-col:first-child {
@@ -106,7 +143,7 @@ export default class GrabSingle extends Vue {
     }
     .van-row:nth-child(4) {
       div {
-        weight:100%;
+        width:100%;
         height: 100%;
       }
       .van-col:first-child {

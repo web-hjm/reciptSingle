@@ -21,14 +21,19 @@
         </van-row>
         <van-row type="flex" justify="space-around">
           <van-col span="6">类型</van-col>
-          <van-col span="6">金额（元）</van-col>
+          <van-col span="6">金额(元)</van-col>
           <van-col span="6">订单数量</van-col>
         </van-row>
       </div>
       <div class="singleList-body">
-
+        <van-row type="flex" justify="space-around" v-for="(item, index) in singleList" :key='item.payAmount + index'>
+          <van-col span="6" v-if='item.payType == "zfbwap"'>支付宝扫码</van-col>
+          <van-col span="6" v-else-if='item.payType == "wxwap"'>微信扫码</van-col>
+          <van-col span="6">{{item.payAmount}}</van-col>
+          <van-col span="6">{{item.totalCount}}</van-col>
+        </van-row>
       </div>
-      <div class="singleList-footer">
+      <div class="singleList-footer" @click='moreData'>
         加载更多
       </div>
     </div>
@@ -38,11 +43,12 @@
     <van-row type="flex" justify="space-around" class="recipt-single-footer-btn">
         <van-col span="11">
           <div>
+            <span>当前余额：<strong>{{balance}}</strong>元</span>
             开始抢单
           </div>
         </van-col>
         <van-col span="11">
-          <div>
+          <div @click='getSingleList(true)'>
             刷新
           </div>
         </van-col>
@@ -57,9 +63,37 @@ import { Component, Vue } from 'vue-property-decorator'
 
 })
 export default class reciptSingle extends Vue {
-    private balance:number = 9999 // 余额
-    private sum:number = 9999 // 收益
-
+  private singleList:any[] = [] // 数据列表
+  private pageNum: number = 1;
+  private balance:number = 0 // 余额
+  private pageSize: number = 10; // 页数
+  getSingleList (type?:boolean) {
+    if (type) {
+      this.pageNum = 1;
+      this.singleList = [];
+    }
+    this.$post(`member/statistic/orderStatistic`, {
+      pageNumber: this.pageNum,
+      pageSize: this.pageSize
+    }, {from: true}).then((res:any) => {
+      if (res.data.data.rows.length <= 0) {
+        this.$toast('没有更多数据了');
+      } else {
+        this.$toast('加载成功')
+        this.singleList = [this.singleList, ...res.data.data.rows];
+      }
+    })
+  }
+  moreData () {
+    this.pageNum++;
+    this.getSingleList();
+  }
+  created() {
+    this.getSingleList();  
+    this.$post(`member/account/getAccountInfo`, {}).then((res:any) => {
+          this.balance = res.data.data.availableMoney;
+    })
+  }
 }
 </script>
 <style lang='scss'>
@@ -107,6 +141,17 @@ export default class reciptSingle extends Vue {
       .van-col:nth-child(1) {
         background: url('../assets/commonPic/4/开始抢单按钮.png') no-repeat;
         background-size: 100% 110%;
+        position: relative;
+        span {
+          font-size: 1vh;
+          position: absolute;
+          top: 10%;
+          left: 17%;
+          line-height: 2rem;
+          strong {
+            color: #00ff1d;
+          }
+        }
       }
       .van-col:nth-child(2) {
         background: url('../assets/commonPic/4/刷新按钮.png') no-repeat;
@@ -134,7 +179,9 @@ export default class reciptSingle extends Vue {
     .singleList-body {
       width: 100%;
       height: 65%;
-      background: purple;
+      overflow: hidden;
+      overflow-y: auto;
+      text-align: center;
     }
     .singleList-footer {
       text-align: center;
@@ -165,7 +212,10 @@ export default class reciptSingle extends Vue {
         top: 49%;
         .singleList-body {
           width: 100%;
-          height: 66%;
+          height: 68%;
+        }
+        .singleList-footer {
+          margin-top: 1vh;
         }
     }
   }

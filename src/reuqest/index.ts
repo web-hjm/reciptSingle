@@ -4,11 +4,10 @@ import { Toast } from 'vant';
 import Vue from 'vue'
 import qs from 'qs'
 axios.defaults.baseURL = util.requestApi;
-// axios.defaults.withCredentials = true;
-axios.defaults.withCredentials= false,
+axios.defaults.withCredentials = true;
 axios.defaults.timeout = 30000;
 axios.interceptors.request.use((req:any):any => {
-    req.headers.token = window.localStorage.getItem('token') || '';
+    req.headers.token = window.localStorage.getItem('userId') || '';
    return req
 }, (error:any) => {
 })

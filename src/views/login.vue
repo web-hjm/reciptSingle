@@ -136,12 +136,19 @@ export default class Login extends Vue {
         return
       } else {
         this.$post('member/login/checkVerify', {
-          moblie: this.loginData.phone,
+          mobile: this.loginData.phone,
           pwd: CryptoJS.MD5(this.loginData.password).toString(),
           code: this.loginData.verify
         }, {from: true}).then((res:any) => {
-          if(res.res.code == 0) {
+          if(res.data.code == 0) {
             this.$cookies.set('userId', CryptoJS.MD5(this.loginData.moblie).toString(), 60 * 60 * 24 * 3) // 存储手机号3天 3天内有效
+            this.$toast(res.data.msg);
+            this.$router.push('/home')
+          } else {
+            this.$toast(res.data.msg);
+            this.getPic();
+            this.loginData.password = '';
+            this.loginData.verify = '';
           }
         })
       }
@@ -176,7 +183,16 @@ export default class Login extends Vue {
           registerCode: this.registerData.invatationCode,
           memName: this.registerData.name
         }, {from: true}).then((res:any) => {
-          console.log(res)
+          if (res.data.code == 0) {
+            this.$toast('注册成功，请使用账号密码登陆');
+            setTimeout(() => {
+              this.user_status = true;
+            }, 600)
+          } else {
+            this.$toast(res.data.msg);
+            this.registerData.password = '';
+            this.registerData.confirmPassword = '';
+          }
         })
       }
     }

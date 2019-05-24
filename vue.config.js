@@ -74,18 +74,26 @@ module.exports = {
     devServer: {
         port: 8086, // 端口号
         host: '10.3.32.88',
-        https: true, // https:{type:Boolean}
+        https: false, // https:{type:Boolean}
         open: true, //配置自动启动浏览器
         // proxy: 'http://localhost:4000' // 配置跨域处理,只有一个代理
         // proxy: {
-        //     '/api': {
-        //         target: '<url>',
-        //         ws: true,
-        //         changeOrigin: true
+        //     '/test': {
+        //         // target: 'http://119.139.198.3:8100/',
+        //         // ws: true,
+        //         // changeOrigin: true
+        //         pathRewrite: { 
+        //             '^/test': ''  // 路径重写，第一个与上面相同，第二个/queue-admin 为server.context-path（服务器的上下文）
+        //         },
+        //         changeOrigin: true,
+        //         secure: false,
+        //         headers: {
+        //         Referer: 'http://119.139.198.3:8100/'
+        //         }
         //     },
-        //     '/foo': {
-        //         target: '<other_url>'
-        //     }
+            // '/foo': {
+            //     target: '<other_url>'
+            // }
         // },  // 配置多个代理
     },
     pluginOptions: {

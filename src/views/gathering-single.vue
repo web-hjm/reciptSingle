@@ -20,12 +20,19 @@
         </van-row>
         <van-row type="flex" justify="space-around">
           <van-col span="6">类型</van-col>
-          <van-col span="6">金额（元）</van-col>
+          <van-col span="6">金额(元)</van-col>
           <van-col span="6">操作</van-col>
         </van-row>
       </div>
       <div class="singleList-body">
-
+        <div class="singleList-body">
+        <van-row type="flex" justify="space-around" v-for="(item, index) in singleList" :key='item.payAmount + index'>
+            <van-col span="6" v-if='item.payType == "zfbwap"'>支付宝扫码</van-col>
+            <van-col span="6" v-else-if='item.payType == "wxwap"'>微信扫码</van-col>
+            <van-col span="6">{{item.payAmount}}</van-col>
+            <van-col span="6">{{item.totalCount}}</van-col>
+          </van-row>
+        </div>
       </div>
       <div class="singleList-footer">
         加载更多
@@ -41,7 +48,7 @@
           </div>
         </van-col> -->
         <van-col span="14">
-          <div>
+          <div @click='getSingleList(true)'>
             <span>当前余额：{{balance}}</span>
             刷新
           </div>
@@ -57,9 +64,37 @@ import { Component, Vue } from 'vue-property-decorator'
 
 })
 export default class Gathering extends Vue {
-    private balance:number = 9999 // 余额
-    private sum:number = 9999 // 收益
-
+    private singleList:any[] = [] // 数据列表
+    private pageNum: number = 1;
+    private balance:number = 0 // 余额
+    private pageSize: number = 10; // 页数
+    getSingleList (type?:boolean) {
+    if (type) {
+      this.pageNum = 1;
+      this.singleList = [];
+    }
+    this.$post(`member/memberInfo/orderList`, {
+      pageNumber: this.pageNum,
+      pageSize: this.pageSize
+    }, {from: true}).then((res:any) => {
+      if (res.data.data.rows.length <= 0) {
+        this.$toast('没有更多数据了');
+      } else {
+        this.$toast('加载成功')
+        this.singleList = [this.singleList, ...res.data.data.rows];
+      }
+    })
+  }
+  moreData () {
+    this.pageNum++;
+    this.getSingleList();
+  }
+  created() {
+    this.getSingleList();  
+    this.$post(`member/account/getAccountInfo`, {}).then((res:any) => {
+          this.balance = res.data.data.availableMoney;
+    })
+  }
 }
 </script>
 <style lang='scss'>
@@ -137,11 +172,16 @@ export default class Gathering extends Vue {
     .singleList-body {
       width: 100%;
       height: 68%;
-      background: purple;
+      overflow: hidden;
+      overflow-y: auto;
+      text-align: center;
     }
     .singleList-footer {
       text-align: center;
     }
+    .singleList-footer {
+        margin-top: 1vh;
+      }
   }
   @media screen and (max-width: 390px) and (max-height: 740px){
     .GrabSingle {
@@ -164,7 +204,7 @@ export default class Gathering extends Vue {
         top: 38%;
         .singleList-body {
           width: 100%;
-          height: 62%;
+          height: 65%;
         }
     }
   }

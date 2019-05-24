@@ -15,7 +15,7 @@ import CryptoJS from 'crypto-js';
 //         break;
 // }
 export default {
-    'requestApi' : 'http://119.139.198.3:8100/',
+    'requestApi' : 'http://119.139.198.3:8200/',
     getUrlParams () {
         let url = window.location.href.split('#')[0];
         let Request:any = new Object();  
