@@ -1,7 +1,7 @@
 <template>
   <div class="grab-single-log">
     <div class='header'>
-      <van-row type="flex" justify="space-around" style="textAlign:center">
+      <van-row type="flex" justify="space-around" align="center">
           <van-col span="5" >
               创建时间
           </van-col>
@@ -11,7 +11,7 @@
           <van-col span="5" >
               类型
           </van-col>
-          <van-col span="3" >
+          <van-col span="4" >
               金额
           </van-col>
           <van-col span="4" >
@@ -19,11 +19,11 @@
           </van-col>
       </van-row>
     </div>
-    <div class='content'>
+    <div class='content' style="height:68vh">
       <p v-show='logList.length <= 0' class='unlog-show'>
         暂无抢单记录！！！
       </p>
-      <van-row type="flex" justify="space-around" v-for='(item, index) in logList' :key='index' style="textAlign:center">
+      <van-row type="flex" justify="space-around" v-for='(item, index) in logList' :key='index' align="center">
           <van-col span="5" >
             {{item.createTimeStr}}
           </van-col>
@@ -34,20 +34,20 @@
             <span v-if='item.payType == "zfbwap"'>支付宝扫码</span>
             <span v-else-if='item.payType == "wxwap"'>微信扫码</span>
           </van-col>
-          <van-col span="3" >
+          <van-col span="4" >
             {{item.payAmount}}
           </van-col>
           <van-col span="4" >
-            <van-button type="default" class="log-btn" v-if='item.status == 0'>确认收款</van-button>
+            <van-button type="default" class="log-btn" v-if='item.status == 0' @click="confirm(item)">确认收款</van-button>
             <van-button type="default" class="log-btn" v-if='item.status == 1' disabled>已收款</van-button>
             <van-button type="default" class="log-btn" v-if='item.status == 2' disabled>已撤销</van-button>
           </van-col>
       </van-row>
-      <p v-show='logList.length > 0' style="textAlign:center" @click='() => {
+    </div>
+     <p v-show='logList.length > 0' style="textAlign:center" @click='() => {
           pageNum++,
           getLogList()
         }' >加载更多</p>
-    </div>
   </div>
 </template>
 <script lang="ts">
@@ -57,8 +57,21 @@ export default class GrabSingleLog extends Vue {
   private pageNum: number = 1;
   private pageSize: number = 10; // 页数
     private logList: any[] = []
-    creted() {
+    mounted() {
       this.getLogList();
+    }
+    confirm (obj:any) {
+      console.log(obj)
+      this.$post(`member/memberInfo/confirmOrder`, {
+        payOrderId: obj.payOrderId
+      }, {from: true}).then((res:any) => {
+        this.$toast(res.data.msg)
+        if (res.data.code == 0) {
+          this.pageNum = 1;
+          this.logList = [];
+          this.getLogList();
+        } 
+      })
     }
     getLogList () {
       this.$post(`member/memberInfo/orderList`, {
@@ -105,7 +118,7 @@ export default class GrabSingleLog extends Vue {
         }
         .unlog-show {
           text-align:center;
-          margin-top:40%;
+          margin-top:15vh;
         }
         .log-btn {
             padding: 0px;

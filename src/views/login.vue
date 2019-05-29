@@ -143,7 +143,7 @@ export default class Login extends Vue {
           if(res.data.code == 0) {
             this.$cookies.set('userId', CryptoJS.MD5(this.loginData.moblie).toString(), 60 * 60 * 24 * 3) // 存储手机号3天 3天内有效
             this.$toast(res.data.msg);
-            this.$router.push('/home')
+            this.$router.push('/')
           } else {
             this.$toast(res.data.msg);
             this.getPic();

@@ -1,16 +1,16 @@
 <template>
   <div class="mine">
     <van-row type="flex" class="mine-header">
-        <van-col span="12" style="text-indent:1em">
-         会员昵称：
+        <van-col span="14" style="text-indent:1em">
+         会员昵称：{{userData.memName}}
         </van-col>
-        <van-col span="12">
-         <strong>信誉积分：</strong>
+        <van-col span="10">
+         <strong>信誉积分：{{userData.score}}</strong>
         </van-col>
     </van-row>
     <van-row type="flex" class="mine-header">
         <van-col span="24" style="text-indent:1em">
-         会员账号：
+         会员账号：{{userData.phoneNumber}}
         </van-col>
     </van-row>
     <div class="info-list">
@@ -28,7 +28,7 @@
             </li>
         </ul>
     </div>
-    <div class="user-info-footer">
+    <div class="user-info-footer" @click="logout">
         退出登陆
     </div>
   </div>
@@ -40,8 +40,11 @@ import { Component, Vue } from 'vue-property-decorator'
 
 })
 export default class Gathering extends Vue {
-    private balance:number = 9999 // 余额
-    private sum:number = 9999 // 收益
+    private userData:any = {
+        memName: '',
+        phoneNumber: '',
+        score: '' 
+    }
     private infoList:any[] = [
         {
             imgSrc: '../assets/commonPic/抢收款单.png',
@@ -81,9 +84,24 @@ export default class Gathering extends Vue {
         {
             imgSrc: '',
             text: '收款码',
-            src: '/account/user-info'
+            src: '/account/qr-code'
         }
     ]
+    logout () {
+        this.$post(`member/login/loginOut`, {from: true}).then((res:any) => {
+            this.$toast(res.data.msg)
+            if (res.data.code == 0) {
+                this.$cookies.remove('userId');
+                this.$router.push('/login');
+            }
+        })
+    }
+    mounted() {
+        this.$post(`/member/memberInfo/getMemeber`).then((res:any) => {
+            this.userData = res.data.data;
+            console.log(this.userData)
+        })
+    }
 }
 </script>
 <style lang='scss'>

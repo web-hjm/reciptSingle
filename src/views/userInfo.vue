@@ -6,7 +6,15 @@
                 身份证号码：
             </van-col>
             <van-col span="14">
-                <van-field placeholder="请输入您的身份证号码" />
+                <van-field placeholder="请输入您的身份证号码" v-model='reuqestData.identifyNumber'/>
+            </van-col>
+        </van-row>
+        <van-row type="flex"  >
+            <van-col span="8">
+                手机号码：
+            </van-col>
+            <van-col span="14">
+                <van-field placeholder="请输入您的手机号码" v-model='reuqestData.phoneNumber'/>
             </van-col>
         </van-row>
         <van-row type="flex"  >
@@ -14,7 +22,7 @@
                 所在地区：
             </van-col>
             <van-col span="14">
-                <van-field placeholder="请输入所在地区" />
+                <van-field placeholder="请输入所在地区" v-model='reuqestData.area'/>
             </van-col>
         </van-row>
         <van-row type="flex"  >
@@ -22,7 +30,7 @@
                 详细地址：
             </van-col>
             <van-col span="14">
-                <van-field placeholder="请输入详细地址" />
+                <van-field placeholder="请输入详细地址" v-model='reuqestData.detailArea'/>
             </van-col>
         </van-row>
         <van-row type="flex"  >
@@ -30,20 +38,12 @@
                 支付密码：
             </van-col>
             <van-col span="14">
-                <van-field placeholder="请输入6位数支付密码" type='password'/>
-            </van-col>
-        </van-row>
-        <van-row type="flex"  >
-            <van-col span="8">
-                支付密码：
-            </van-col>
-            <van-col span="14">
-                <van-field placeholder="请输入6位数支付密码" type='password'/>
+                <van-field placeholder="请输入6位数支付密码" type='password' v-model='reuqestData.payPasswd'/>
             </van-col>
         </van-row>
         <van-row type="flex" justify="space-around" >
             <van-col span="6" >
-                <button class='userinfo-footer-btn'>保存</button>
+                <button class='userinfo-footer-btn' @click='save'>保存</button>
             </van-col>
         </van-row>
     </div>
@@ -51,9 +51,60 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import CryptoJS from 'crypto-js';
 @Component({})
 export default class UserInfo extends Vue {
-    
+    private reuqestData:any = {
+        identifyNumber: '',
+        phoneNumber: '',
+        area: '',
+        detailArea: '',
+        detailId: '',
+        payPasswd: ''
+    }
+    created() {
+        this.$post(`member/detail/queryMemberDetail`).then((res:any) => {
+            res.data.code == 0 && (this.reuqestData.detailId = res.data.data.detailId)
+        })
+    }
+    save () {
+        if (!(this.reuqestData.identifyNumber && this.reuqestData.area && this.reuqestData.detailArea && this.reuqestData.payPasswd && this.reuqestData.phoneNumber)) {
+            this.$toast('以上所有信息为必填，请按照要求填写')
+            return
+        } else {
+            if (!(/^[0-9a-zA-Z]{18}$/.test(this.reuqestData.identifyNumber))) {
+                this.$toast('身份证只可输入数字或字母且为18位数')
+                return
+            } else if (!(/^[1][3,4,5,7,8][0-9]{9}$/.test(this.reuqestData.phoneNumber))) {
+                this.$toast('该手机号码格式有误，请重新输入');
+                return
+            } else if (this.reuqestData.area.length > 20){
+                this.$toast('地址只可输入中文且不超过20个字');
+                return
+            } else if (this.reuqestData.area.detailArea > 10){
+                this.$toast('详细地址只可输入中文且不超过10个字');
+                return
+            } else if (!(/^\d{6}$/.test(this.reuqestData.payPasswd))) {
+                this.$toast('支付密码请设置6位数数字');
+                return
+            } else {
+                this.reuqestData.payPasswd = CryptoJS.MD5(this.reuqestData.payPasswd).toString()
+                this.$post(`member/detail/saveMemberDetail`, this.reuqestData, {from: true}).then((res:any) => {
+                    if (res.data.code == 0) {
+                        this.$toast('保存成功'), 
+                        this.reuqestData = {
+                            identifyNumber: '',
+                            phoneNumber: '',
+                            area: '',
+                            detailArea: '',
+                            detailId: '',
+                            payPasswd: ''
+                        }
+                    }
+                })
+            }
+        }
+    }
 }
 </script>
 <style lang="scss">

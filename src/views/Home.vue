@@ -3,7 +3,10 @@
     <publicHeader/>
     <!-- 公告 -->
      <router-view></router-view>
-    <publicTabbar />
+     <keep-alive>
+       <publicTabbar />
+     </keep-alive>
+    
     <!-- 底部tabbar -->
   </div>
 </template>

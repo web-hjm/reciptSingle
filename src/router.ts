@@ -1,10 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
-
+import VueCookies from 'vue-cookies'
 Vue.use(Router)
 
-export default new Router({
+export const router = new Router({
   // mode: 'history',
   // base: process.env.BASE_URL,
   routes: [
@@ -14,9 +14,9 @@ export default new Router({
       component: () => import(/* webpackChunkName: "about" */ './views/login.vue')
     },
     {
-      path: '/home',
+      path: '/',
       name: 'home',
-      redirect: '/home/grab-single',
+      redirect: '/grab-single',
       component: () => import(/* webpackChunkName: "about" */ './views/home.vue'),
       children: [
         {
@@ -90,7 +90,7 @@ export default new Router({
           name: 'grab-single-log',
           meta: {
             title: '抢单记录',
-            type: 'app'
+            // type: 'app'
           },
           component: () => import(/* webpackChunkName: "about" */ './views/grabSingleLog.vue')
         },
@@ -98,7 +98,8 @@ export default new Router({
           path: 'charge-log',
           name: 'charge-log',
           meta: {
-            title: '充值记录'
+            title: '充值记录',
+            // type: 'app'
           },
           component: () => import(/* webpackChunkName: "about" */ './views/chargeLog.vue')
         },
@@ -106,11 +107,29 @@ export default new Router({
           path: 'withdraw-weposit-log',
           name: 'withdraw-weposit-log',
           meta: {
-            title: '提现记录'
+            title: '提现记录',
+            // type: 'app'
           },
           component: () => import(/* webpackChunkName: "about" */ './views/withdrawDepositLog.vue')
+        },
+        {
+          path: 'qr-code',
+          name: 'qr-code',
+          meta: {
+            title: '收款码',
+            // type: 'app'
+          },
+          component: () => import(/* webpackChunkName: "about" */ './views/qrCode.vue')
         }
       ]
     }
   ]
+})
+router.beforeEach((to:any, from:any, next:any):any => {
+ if ((VueCookies as any).get('userId')) {
+    next();
+ } else {
+   to.path === '/login' ? next() : next({path: '/login'})
+ }
+  
 })

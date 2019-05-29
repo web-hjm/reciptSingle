@@ -1,6 +1,6 @@
 <template>
   <div class="public-user-info">
-    <div class="join-us-content"  @click="$router.push('/home/mine')">
+    <div class="join-us-content"  @click="$router.push('/mine')">
       <van-row type="flex" justify="space-around" >
         <van-col span="4">
         </van-col>
@@ -10,7 +10,9 @@
       </van-row>
     </div>
     <router-view></router-view>
-    <publicTabbar />
+    <keep-alive>
+       <publicTabbar />
+    </keep-alive>
     <!-- 加入我们 -->
   </div>
 </template>
@@ -42,7 +44,7 @@ export default class PublicUserInfo extends Vue {
       .van-col:last-child {
         span {
           display: inline-block;
-          height: 100%;
+          height: 3rem;
           width: 8rem;
           line-height: 3rem;
           position: absolute;

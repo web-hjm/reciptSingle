@@ -59,7 +59,7 @@
       v-model="actionSingleShow"
       title="智能匹配订单..."
       confirmButtonText='关闭抢单'
-      @confirm='Single(0)'
+      @confirm='confirm'
     >
       <p>抢单匹配中请稍后，60S后若未抢到订单，请重新点击开始抢单按钮</p>
       <p style="text-align:center">{{countDown}}秒</p>
@@ -75,6 +75,7 @@ import { Component, Vue } from 'vue-property-decorator'
 export default class reciptSingle extends Vue {
   private singleList:any[] = [] // 数据列表
   private pageNum: number = 1;
+  private time:any = '' //定时器
   private balance:number = 0 // 余额
   private pageSize: number = 10; // 页数
   private actionSingleShow: boolean = false;
@@ -103,14 +104,31 @@ export default class reciptSingle extends Vue {
   actionSingle () {
     this.actionSingleShow = true;
     this.countDown = 60; // 重置倒计时
-    let time = setInterval(() => {
+    this.time = setInterval(() => {
+      if (this.countDown % 5 == 0) {
+        // this.pageNum = 1;
+        // this.singleList = [];
+        this.$post(`member/memberInfo/orderList`, {
+          pageNumber: 1,
+          pageSize: 1
+        }, {from: true}).then((res:any) => {
+          if (res.data.data.rows[0].status == 1) {
+            clearInterval(this.time);
+            this.$toast('抢单成功')
+            setTimeout(() => {
+              this.$router.push('/account/grab-single-log')
+            }, 600);
+          }
+        })
+      } // 每隔5秒重新调用
       if (this.countDown <= 0) {
-        clearInterval(time);
+        clearInterval(this.time);
         this.actionSingleShow = false;
+        this.Single(0)
       } else {
         this.countDown--;
       }
-      console.log(this.countDown);
+      // console.log(this.countDown);
     }, 1000)
     try {
         let data = this.Single(1);
@@ -118,7 +136,14 @@ export default class reciptSingle extends Vue {
     } catch (error) {
         this.countDown = 60; // 重置倒计时
         this.actionSingleShow = false;
+        clearInterval(this.time);
     }
+  }
+  confirm () {
+    clearInterval(this.time);
+    this.Single(0);
+    this.countDown = 0;
+    console.log(this.time)
   }
   Single(status: number) {
     return this.$post(`member/memberInfo/updateMember`, {

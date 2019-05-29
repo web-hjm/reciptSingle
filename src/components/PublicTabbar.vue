@@ -1,7 +1,9 @@
 <template>
   <div class="hello">
-    <van-tabbar v-model="active">
-    <van-tabbar-item @click='$router.push("/home")'>
+    <van-tabbar v-model="active" safe-area-inset-bottom @change='(index) => {
+        active = index
+      }' active-color='black'>
+    <van-tabbar-item @click='$router.push("/")'>
       <span>抢单</span>
       <img
         slot="icon"
@@ -9,7 +11,7 @@
         :src='"../assets/commonPic/抢单图标.png"'
       >
     </van-tabbar-item>
-    <van-tabbar-item @click='$router.push("/home/mine")'>
+    <van-tabbar-item @click='$router.push("/mine")'>
       <span>我的</span>
       <img
         slot="icon"
@@ -27,7 +29,7 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 
 @Component
 export default class PublicTabbar extends Vue {
-  @Prop() private active: number = 0;
+  private active: number = 0;
 }
 </script>
 

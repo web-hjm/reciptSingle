@@ -6,7 +6,7 @@
                 开户行名称：
             </van-col>
             <van-col span="14">
-                <van-field placeholder="请输入开户行名称" />
+                <van-field placeholder="请输入开户行名称" v-model='reuqestData.bankName'/>
             </van-col>
         </van-row>
         <van-row type="flex"  >
@@ -14,23 +14,23 @@
                 支行名称：
             </van-col>
             <van-col span="14">
-                <van-field placeholder="请输入支行名称" />
+                <van-field placeholder="请输入支行名称" v-model='reuqestData.branchBankName'/>
             </van-col>
         </van-row>
-        <van-row type="flex"  >
+        <!-- <van-row type="flex"  >
             <van-col span="8">
                 支行地址：
             </van-col>
             <van-col span="14">
                 <van-field placeholder="请输入支行地址" />
             </van-col>
-        </van-row>
+        </van-row> -->
         <van-row type="flex"  >
             <van-col span="8">
                 银行卡号：
             </van-col>
             <van-col span="14">
-                <van-field placeholder="请输入银行卡号" />
+                <van-field placeholder="请输入银行卡号" v-model='reuqestData.bankNo'/>
             </van-col>
         </van-row>
         <van-row type="flex"  >
@@ -38,12 +38,12 @@
                 开户人姓名：
             </van-col>
             <van-col span="14">
-                <van-field placeholder="请输入开户人姓名" />
+                <van-field placeholder="请输入开户人姓名" v-model='reuqestData.accountName'/>
             </van-col>
         </van-row>
         <van-row type="flex" justify="space-around" >
             <van-col span="6" >
-                <button class='cardInfo-footer-btn'>保存</button>
+                <button class='cardInfo-footer-btn' @click='save'>保存</button>
             </van-col>
         </van-row>
     </div>
@@ -53,7 +53,53 @@
 import { Component, Vue } from "vue-property-decorator";
 @Component({})
 export default class CardInfo extends Vue {
-    
+    private reuqestData:any = {
+        bankName: '',
+        branchBankName: '',
+        accountName: '',
+        bankNo: '',
+        // detailId: '',
+        // payPasswd: ''
+    }
+    beforeCreate() {
+        this.$post(`member/detail/queryMemberDetail`).then((res:any) => {
+            (res.data.code != 0 || !res.data.data.payPasswd) && this.$toast('请先设置支付密码');
+            (res.data.code != 0 || !res.data.data.payPasswd) && this.$router.push('/account/user-info');
+        })
+    }
+    save () {
+        if (!(this.reuqestData.bankName && this.reuqestData.branchBankName && this.reuqestData.accountName && this.reuqestData.bankNo)) {
+            this.$toast('以上所有信息为必填，请按照要求填写')
+            return
+        } else {
+            if (!(/^[\u4e00-\u9fa5]{1,20}$/.test(this.reuqestData.bankName))) {
+                this.$toast('开户行名称只可输入中文，不超过20个字')
+                return
+            } else if (!(/^[\u4e00-\u9fa5]{1,20}$/.test(this.reuqestData.branchBankName))) {
+                this.$toast('支行名称只可输入中文，不超过20个字');
+                return
+            } else if (!(/^[\u4e00-\u9fa5]{1,8}$/.test(this.reuqestData.accountName))){
+                this.$toast('开卡人姓名只可输入中文，不超过8个字');
+                return
+            } else if (!(/^\d{1,19}$/.test(this.reuqestData.bankNo))){
+                this.$toast('银行卡号只可输入数字且不超过19位');
+                return
+            } else {
+                // this.reuqestData.payPasswd = CryptoJS.MD5(this.reuqestData.payPasswd).toString()
+                this.$post(`member/bank/addBankInfo`, this.reuqestData, {from: true}).then((res:any) => {
+                    if (res.data.code == 0) {
+                        this.$toast('保存成功'), 
+                        this.reuqestData = {
+                            bankName: '',
+                            branchBankName: '',
+                            accountName: '',
+                            bankNo: ''
+                        }
+                    }
+                })
+            }
+        }
+    }
 }
 </script>
 <style lang="scss">
